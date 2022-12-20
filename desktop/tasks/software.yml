@@ -9,7 +9,6 @@
       register: apt_upgrade
       retries: 5
       until: apt_upgrade is success
-  when: upgrade_packages
   notify: reboot system
   tags:
     - software-all
