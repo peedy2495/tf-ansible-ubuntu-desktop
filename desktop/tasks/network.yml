@@ -1,0 +1,7 @@
+- name: add Nexus for internal name resolving
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ nexus_proxy }} nexus nexus"
+    state: present
+  tags:
+    - etc-hosts

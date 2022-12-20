@@ -1,0 +1,56 @@
+#!/bin/bash
+
+main () {
+    case $1 in
+        export)
+            pull $2
+        ;;
+        import)
+            push $2
+        ;;
+        *)
+            echo "Usage: nexus-sync export/import [opt: storagepath]"
+        ;; 
+    esac
+}
+
+pull () {
+    if [ ! -f /etc/ns-export.conf ]; then
+        echo "Missing config file /etc/ns-export.conf!"
+        exit 1
+    fi
+    source /etc/ns-export.conf
+    STORAGE="${1:-$DEFPATH}"
+    if [ ! -d $STORAGE ]; then
+        echo "Missing storage @ $STORAGE"
+        exit 1
+    fi
+    sudo systemctl stop nexus
+    sleep 2
+    rsync -avz --del --exclude={'cache','tmp'} $SOURCE $STORAGE
+    BASE=$(basename $SOURCE)
+    chmod -R go+rw $STORAGE/$BASE
+    sync
+    sudo systemctl start nexus
+    echo "Export finished ... you may unmount the storage"
+}
+
+push () {
+    if [ ! -f /etc/ns-import.conf ]; then
+        echo "Missing config file /etc/ns-import.conf!"
+        exit 1
+    fi
+    source /etc/ns-import.conf
+    STORAGE="${1:-$DEFPATH}"
+    if [ ! -d $STORAGE ]; then
+        echo "Missing storage @ $STORAGE"
+        exit 1
+    fi
+    ssh nexus@$HOST 'sudo systemctl stop nexus'
+    sleep 2
+    rsync -avz --del --protect-args --exclude={'cache','tmp'} "$STORAGE" nexus@$HOST:$HOSTPATH
+    ssh nexus@$HOST 'sudo systemctl start nexus'
+    echo "Import finished ... you may unmount the storage"
+}
+
+main $@

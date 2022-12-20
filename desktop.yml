@@ -1,0 +1,3 @@
+- hosts: desktop
+  roles:
+    - desktop

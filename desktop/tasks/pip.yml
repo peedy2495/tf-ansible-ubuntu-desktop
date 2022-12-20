@@ -1,0 +1,39 @@
+- name: pip - Install virtualenv
+  pip:
+    name: virtualenv
+    executable: pip3
+  tags:
+    - pip-requirements
+
+- name: pip - copy all reqirements to remote instance
+  copy:
+    src: ./assets/project-requirements
+    dest: /tmp
+  tags:
+    - pip-requirements
+
+- name: pip - determine all requirement files
+  find:
+    paths: /tmp/project-requirements
+    recurse: yes
+    file_type: file
+    patterns: "*.txt"
+  register: pip_requirements
+  tags:
+    - pip-requirements
+
+- name: pip - process all requirement files
+  pip:
+    requirements: "{{ item.path }}"
+    virtualenv: "{{ item.path | dirname}}/venv"
+    virtualenv_python: python3
+  loop: "{{ pip_requirements.files }}"
+  tags:
+    - pip-requirements
+
+- name: pip - cleanup - pip requirements
+  file:
+    path: /tmp/project-requirements
+    state: absent
+  tags:
+    - pip-requirements

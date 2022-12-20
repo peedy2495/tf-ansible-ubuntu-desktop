@@ -1,0 +1,75 @@
+- name: copy all reqirements to remote instance
+  become_user: ansible
+  copy:
+    src: ./assets/project-requirements
+    dest: /home/ansible/
+  tags:
+    - golang
+    - golang-requirements
+
+- name: setup goproxy
+  template:
+    src: golang-profile.j2
+    dest: /etc/profile.d/golang.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - golang
+
+- name: copy all reqirements to remote instance
+  become_user: ansible
+  copy:
+    src: ./assets/project-requirements
+    dest: /home/ansible/
+  tags:
+    - golang
+    - go-requirements
+
+- name: determine all requirement files
+  become_user: ansible
+  find:
+    paths: /home/ansible/project-requirements
+    recurse: yes
+    file_type: file
+    patterns: "go.mod"
+  register: go_requirements
+  tags:
+    - golang
+    - go-requirements
+
+- name: process all requirement files
+  become_user: ansible
+  environment:
+    GOPROXY: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/go-default/"
+    GOSUMDB: off
+  command:
+    chdir: "{{ item.path | dirname}}"
+    cmd: go mod download
+  loop: "{{ go_requirements.files }}"
+  tags:
+    - golang
+    - go-requirements
+
+- name: cleanup - go requirements
+  become_user: ansible
+  block:
+    - name: removing project-requirements
+      file:
+        path: /home/ansible/project-requirements
+        state: absent
+    - name: prep permissions for removing
+      file:
+        path: /home/ansible/go
+        mode: ugo+rw
+        recurse: yes
+    - name: removing go folder
+      file:
+        path: /home/ansible/go
+        state: absent
+  tags:
+    - golang
+    - go-requirements

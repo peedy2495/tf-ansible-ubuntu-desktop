@@ -1,0 +1,277 @@
+- name: disable i386 architecture
+  command: sudo dpkg --remove-architecture i386
+
+- name: cleanup sources.list.d - getfiles
+  find:
+    paths: /etc/apt/sources.list.d
+    patterns: "*"
+  register: files_delete
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repocleanup
+
+- name: cleanup sources.list.d - deletefiles
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ files_delete.files }}"
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repocleanup
+
+- name: native repositories
+  template:
+    src: sources.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+
+- name: ansible Repository
+  block:
+    - name: ansible gpg-key
+      copy:
+        src: gpg/ppa-ansible.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: ansible repofile
+      template:
+        src: ppa-ansible.j2
+        dest: /etc/apt/sources.list.d/ppa-ansible.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-ansible
+
+- name: vscode Repository
+  block:
+    - name: vscode gpg-key
+      copy:
+        src: gpg/microsoft.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: vscode repofile
+      template:
+        src: vscode.j2
+        dest: /etc/apt/sources.list.d/vscode.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-vscode
+
+- name: docker-ce Repository
+  block:
+    - name: docker-ce gpg-key
+      copy:
+        src: gpg/docker-archive-keyring.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: docker-ce repofile
+      template:
+        src: docker-ce.j2
+        dest: /etc/apt/sources.list.d/docker-ce.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-docker-ce
+
+- name: google-chrome Repository
+  block:
+    - name: google-chrome gpg-key
+      copy:
+        src: gpg/google-chrome.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+        attributes: +i #prevent overwriting from bitchy chrome installer
+    - name: google-chrome repofile
+      template:
+        src: google-chrome.j2
+        dest: /etc/apt/sources.list.d/google-chrome.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: no
+    - name: google-chrome repo config
+      lineinfile:
+        path: /etc/default/google-chrome
+        create: yes
+        regexp: "^(.*){{ item.key }}"
+        line: "{{ item.key }}={{ item.value }}"
+        state: present
+      with_items:
+        - key: "repo_add_once"
+          value: "true"
+        - key: "repo_reenable_on_distupgrade"
+          value: "true"
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-google-chrome
+
+- name: ppa-graphics-drivers Repository
+  block:
+    - name: ppa-graphics-drivers gpg-key
+      copy:
+        src: gpg/graphics-drivers_ubuntu_ppa.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: ppa-graphics-drivers repofile
+      template:
+        src: ppa-graphics-drivers.j2
+        dest: /etc/apt/sources.list.d/ppa-graphics-drivers.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-ppa-graphics-drivers
+
+- name: ppa-golang-backports Repository
+  block:
+    - name: ppa-golang-backports gpg-key
+      copy:
+        src: gpg/longsleep_ubuntu_golang-backports.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: ppa-golang-backports repofile
+      template:
+        src: longsleep-ubuntu-golang-backports-focal.j2
+        dest: /etc/apt/sources.list.d/longsleep-ubuntu-golang-backports-focal.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-ppa-golang-backports
+
+- name: node-16 Repository
+  block:
+    - name: node-16 gpg-key
+      copy:
+        src: gpg/nodesource.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: node-16 repofile
+      template:
+        src: node-16.j2
+        dest: /etc/apt/sources.list.d/node-16.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-node-16
+
+- name: QGis Repository
+  block:
+    - name: qgis gpg-key
+      copy:
+        src: gpg/qgis-2022.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: qgis repofile
+      template:
+        src: qgis.j2
+        dest: /etc/apt/sources.list.d/qgis.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-qgis
+
+- name: Kubernetes.io Repository
+  block:
+    - name: kubernetes.io gpg-key
+      copy:
+        src: gpg/kubernetes.io.gpg
+        dest: /etc/apt/trusted.gpg.d/
+        force: no
+        owner: root
+        group: root
+        mode: 0644
+    - name: kubernetes.io repofile
+      template:
+        src: kubernetes.j2
+        dest: /etc/apt/sources.list.d/kubernetes.io.list
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+  tags:
+    - software-all
+    - software-default
+    - software-apt
+    - repositories
+    - repository-kubernetes.io

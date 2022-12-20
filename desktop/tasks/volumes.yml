@@ -1,0 +1,27 @@
+- name: expanding extended partition
+  command: growpart /dev/sda 2
+  ignore_errors: true
+  tags:
+    - drives
+
+- name: expanding root partition
+  command: growpart /dev/sda 5
+  ignore_errors: true
+  tags:
+    - drives
+
+- name: expanding root filesystem
+  command: resize2fs /dev/sda5
+  ignore_errors: true
+  tags:
+    - drives
+
+- name: Disable SWAP on running machine
+  shell: |
+    swapoff -a
+
+- name: Disable SWAP persistent via fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'

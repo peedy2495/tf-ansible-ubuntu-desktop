@@ -1,0 +1,11 @@
+nexus_proxy: "192.168.100.1"
+nexus_proxy_port: "8081"
+nexus_proxy_proto: "http"
+
+ntp_servers: "192.168.100.1"
+
+version_yq: "latest"
+version_helm: "v3.10.2"
+version_k9s: "latest"
+version_terraform: "1.2.5"
+version_terraform_provider_proxmox: "2.9.10"

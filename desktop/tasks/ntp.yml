@@ -1,0 +1,28 @@
+- name: update timesyncd
+  apt:
+    name: systemd-timesyncd
+    state: latest
+    update_cache: yes
+  tags:
+    - ntp
+    - timesyncd
+
+- name: deploy timesyncd config
+  template:
+    src: timesyncd.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  tags:
+    - ntp
+    - timesyncd
+
+- name: restart timesyncd service
+  service:
+    name: systemd-timesyncd
+    state: restarted
+  tags:
+    - ntp
+    - timesyncd

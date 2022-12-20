@@ -1,0 +1,26 @@
+- name: preparing storage
+  import_tasks: volumes.yml
+
+- name: Networking
+  import_tasks: network.yml
+
+- name: disable the native updater
+  import_tasks: disable_updater.yml
+
+- name: Repository issues
+  import_tasks: repos.yml
+
+- name: NTP related stuff
+  import_tasks: ntp.yml
+
+- name: Software
+  import_tasks: software.yml
+
+- name: GFX-Drivers
+  import_tasks: gfx-drivers.yml
+
+- name: pip packages
+  import_tasks: pip.yml
+
+- name: go modules
+  import_tasks: golang.yml

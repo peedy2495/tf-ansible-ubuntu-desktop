@@ -1,0 +1,6 @@
+pylint==2.13.1
+black==22.1.0
+jupyter-client==7.1.2
+jupyter-core==4.9.2
+ipykernel==6.9.2
+requests==2.27.1
