@@ -6,9 +6,9 @@ I'm using this one e.g. for caching nexus repositories needing in air-gap enviro
 The file *`vars.tf`* is for defining basic variables.
 
 ## Prerequisites:
-1st, a cloud-init image on your hypervisor (how to bake, see below) 
+1st, a cloud-init image on your hypervisor (how to bake, see below).
 
-Next, a Proxmox api-token and saved it's values in *`token.export`*
+Next, a Proxmox api-token and saved it's values in *`token.export`*.
 
 Create in your main project-dir a file named: token.export  
 Content:  
@@ -26,7 +26,7 @@ On first use your have to init this repo via `terraform init`, if `.terraform.lo
 Now, create an ed25519 keypair for accessing the new instance with  
 `ssh-keygen -o -a 256 -t ed25519 -C "$(hostname)-$(date +'%d-%m-%Y')" -f [Projectpath]/assets/id_ed25519`
 
-## Terraforming:
+## Terraforming
 
 Steps to deploy instances ...  
 
@@ -40,30 +40,30 @@ you have to type *`yes`* to confirm the execution
 if u're absolutely shure what u're doing, u're able to apply all steps in one  
 `terraform apply -auto-approve`
 
-You want to reject this whole deployment? U're able to do this with  
+you want to reject this whole deployment? U're able to do this with  
 `terraform destroy`
 
 ## How to create your own Ubuntu Desktop cloudimage
 
-This description is made for Proxmox instances. Feel free to adopt to another virtualization ;-)  
+This description is made for Proxmox instances. Feel free to adopt to another virtualization. ;-)  
 First, create a new instance and make an standard Installation from an official ISO.
 You have to define a temporary user for accessing the system during your setup session.
 
 We don't need the cd/dvd device. So, remove it now.
-By using nexus repositories, modify *`/etc/apt/sources.list`* with your flavour, first 
+By using nexus repositories, modify *`/etc/apt/sources.list`* with your flavour, first ...
 
-Install required services ...  
+install required services ...  
 `apt install -y openssh-server cloud-init qemu-guest-agent`
 
-Enable "Guest Agent" in your instance options as virtio device
+enable "Guest Agent" in your instance options as virtio device
 
-Now, reboot the instance and log in via ssh.
+now, reboot the instance and log in via ssh.
 Change into the root-context via `sudo su`
 
-Run guest agent as persistent service  
+run guest agent as persistent service  
 `systemctl enable --now quemu-guest-agent.service`
 
-In *`/etc/ssh/sshd_config`* modify following entries
+in *`/etc/ssh/sshd_config`* modify following entries
 ```
 PasswordAuthentication no
 PermitRootLogin no
@@ -79,6 +79,6 @@ Last, add a "CloudInit Drive" in the same storage where your systemdrive resides
 Convert the instance as template and ... don't forget to create a backup :-)  
 Finished!
 
-Feel free to use this cloud-init template to fire up cloned instances as much as u like :-)
+Feel free to use this cloud-init template to fire up cloned instances as much as u like. :-)
 
 Hint: Never define a smaler OS-disk than the original. Proxmox is only be able to increase the Size!
