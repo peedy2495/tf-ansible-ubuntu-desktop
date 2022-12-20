@@ -1,4 +1,4 @@
-- name: copy all reqirements to remote instance
+- name: golang - copy all reqirements to remote instance
   become_user: ansible
   copy:
     src: ./assets/project-requirements
@@ -7,7 +7,7 @@
     - golang
     - golang-requirements
 
-- name: setup goproxy
+- name: golang - setup goproxy
   template:
     src: golang-profile.j2
     dest: /etc/profile.d/golang.sh
@@ -20,7 +20,7 @@
     - software-apt
     - golang
 
-- name: copy all reqirements to remote instance
+- name: golang - copy all reqirements to remote instance
   become_user: ansible
   copy:
     src: ./assets/project-requirements
@@ -29,7 +29,7 @@
     - golang
     - go-requirements
 
-- name: determine all requirement files
+- name: golang - determine all requirement files
   become_user: ansible
   find:
     paths: /home/ansible/project-requirements
@@ -41,7 +41,7 @@
     - golang
     - go-requirements
 
-- name: process all requirement files
+- name: golang - process all requirement files
   become_user: ansible
   environment:
     GOPROXY: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/go-default/"
@@ -54,7 +54,7 @@
     - golang
     - go-requirements
 
-- name: cleanup - go requirements
+- name: golang - cleanup go requirements
   become_user: ansible
   block:
     - name: removing project-requirements

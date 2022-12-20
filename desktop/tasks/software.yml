@@ -2,7 +2,8 @@
   block:
     - name: killing any running update process
       shell: pkill apt-get; pkill dpkg; sleep 2
-    - name: upgrading
+
+    - name: apt - upgrading
       apt:
         update_cache: yes
         upgrade: yes
@@ -15,7 +16,7 @@
     - software-default
     - upgrade
 
-- name: autoremove orphanned packages
+- name: apt -autoremove orphanned packages
   apt:
     autoremove: yes
   tags:
@@ -30,7 +31,7 @@
     - software-default
     - upgrade
 
-- name: software-default
+- name: apt - software-default
   block:
     - name: running software installation
       apt:
@@ -82,7 +83,7 @@
     - software-default
     - software-apt
 
-- name: deploy pip config for nexus
+- name: system - deploy pip config for nexus
   template:
     src: pip.j2
     dest: /etc/pip.conf
@@ -94,7 +95,7 @@
     - software-all
     - software-default
 
-- name: install golang 1.18 from ppa
+- name: apt - install golang 1.18 from ppa
   block:
     - apt:
         pkg: golang-1.18
@@ -110,7 +111,7 @@
     - software-apt
     - golang
 
-- name: install nexus-sync
+- name: sideload - install nexus-sync
   block:
     - copy:
         src: nexus-sync
@@ -130,7 +131,7 @@
     - software-all
     - software-default
 
-- name: install yq
+- name: sideload - install yq
   get_url:
     url: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/raw-github/mikefarah/yq/releases/{{ version_yq }}/download/yq_linux_amd64"
     dest: /usr/local/sbin/yq
@@ -141,7 +142,7 @@
     - software-all
     - yq
 
-- name: install k9s
+- name: sideload - install k9s
   unarchive:
     src: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/raw-github/derailed/k9s/releases/{{ version_k9s }}/download/k9s_Linux_x86_64.tar.gz"
     dest: /usr/local/sbin
@@ -154,7 +155,7 @@
     - software-all
     - k9s
 
-- name: install helm
+- name: sideload - install helm
   unarchive:
     src: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/raw-helm/helm-{{ version_helm }}-linux-amd64.tar.gz"
     dest: /usr/local/sbin
@@ -167,7 +168,7 @@
     - software-all
     - helm
 
-- name: install Terraform
+- name: sideload - install Terraform
   unarchive:
     src: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/raw-hashicorp/terraform/{{ version_terraform }}/terraform_{{ version_terraform }}_linux_amd64.zip"
     dest: /usr/local/sbin
@@ -179,7 +180,7 @@
     - software-all
     - terraform
 
-- name: create global Terraform Proxmox plugin folder
+- name: sideload - create global Terraform Proxmox plugin folder
   file:
     path: /usr/local/share/terraform/plugins/registry.terraform.io/telemate/proxmox/{{ version_terraform_provider_proxmox }}/download/linux_amd64
     state: directory
@@ -191,7 +192,7 @@
     - software-all
     - terraform
 
-- name: install Terraform Proxmox plugin
+- name: sideload - install Terraform Proxmox plugin
   unarchive:
     src: "{{nexus_proxy_proto}}://{{nexus_proxy}}:{{nexus_proxy_port}}/repository/raw-github/Telmate/terraform-provider-proxmox/releases/latest/download/terraform-provider-proxmox_{{version_terraform_provider_proxmox}}_linux_amd64.zip"
     dest: /usr/local/share/terraform/plugins/registry.terraform.io/telemate/proxmox/{{ version_terraform_provider_proxmox }}/download/linux_amd64/
