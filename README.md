@@ -1,14 +1,14 @@
 # Terraforming a Cloud-Init template for filling Nexus3 proxied repos in a Proxmox hypervisor
 
 This repo is for deploying a precreated proxmox cloud-init template (ubuntu 20.04 @ vmid:8000).
-I'm using this one e.g. for caching nexus repositories needing in air-gap environments. 
+I'm using this one e.g. for caching nexus repositories needed in air-gap environments. 
 
 The file *`vars.tf`* is for defining basic variables.
 
-## Prerequisites:
+## Prerequisites
 1st, a cloud-init image on your hypervisor (how to bake, see below).
 
-Next, a Proxmox api-token and saved it's values in *`token.export`*.
+Next, create a Proxmox api-token in it's UI and saved it's values in *`token.export`*.
 
 Create in your main project-dir a file named: token.export  
 Content:  
