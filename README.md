@@ -23,8 +23,8 @@ In your current shell context you have to set API relevant variables.
 
 On first use your have to init this repo via `terraform init`, if `.terraform.lock.hcl`* doesn't exist.
 
-Last, create a rsa keypair for accessing the new instance with  
-`ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f assets/ssh/tf-deployment_rsa`
+Now, create an ed25519 keypair for accessing the new instance with  
+`ssh-keygen -o -a 256 -t ed25519 -C "$(hostname)-$(date +'%d-%m-%Y')" -f [Projectpath]/assets/id_ed25519`
 
 ## Terraforming:
 
